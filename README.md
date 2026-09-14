@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 智养问卷
 
-## Getting Started
+面向养老院调研的多端问卷站：长者/家属大字填写，工作人员管理、导出，并可随时新建问卷。
 
-First, run the development server:
+本地演示不需要 Docker。数据存在 `data/store.json`。
+
+## 本地预览
 
 ```bash
+cd d:\Forge\Workshop\smart-elderly-care
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 入口 | 说明 |
+|---|---|
+| `/` | 填写入口 |
+| `/s/ai-demo` | AI 智慧养老需求问卷（18 题） |
+| `/s/meal-demo` | 餐食追访问卷（11 题） |
+| `/login` | 工作人员 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+演示账号：`admin` / `changeit`
 
-## Learn More
+## 建议怎么点
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. 手机宽度（约 390）走完一份问卷并提交
+2. 登录后台看队列、打开答卷
+3. 问卷 → 复制一份 → 改题 → 发布 → 在「答卷」里生成邀请
+4. 导出 CSV，用 Excel 打开
