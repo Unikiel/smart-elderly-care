@@ -1,4 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { accessSync, constants, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
 import path from "path";
 import { aiDemandSchema } from "@/questionnaires/ai-demand";
 import { mealFollowupSchema } from "@/questionnaires/meal-followup";
@@ -27,8 +28,21 @@ export type StoreData = {
   storyPhotos: StoryPhoto[];
 };
 
-const dataDir = path.join(process.cwd(), "data");
-const dataFile = path.join(dataDir, "store.json");
+let dataFile = path.join(process.cwd(), "data", "store.json");
+
+function writableStoreFile() {
+  const dir = path.dirname(dataFile);
+  try {
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+    accessSync(dir, constants.W_OK);
+    return dataFile;
+  } catch {
+    const fallback = path.join(tmpdir(), "smart-elderly-care");
+    mkdirSync(fallback, { recursive: true });
+    dataFile = path.join(fallback, "store.json");
+    return dataFile;
+  }
+}
 
 let cache: StoreData | null = null;
 
@@ -178,20 +192,21 @@ function migrate(data: StoreData) {
 
 function read(): StoreData {
   if (cache) return cache;
-  if (!existsSync(dataFile)) {
+  const file = writableStoreFile();
+  if (!existsSync(file)) {
     cache = emptyStore();
     persist(cache);
     return cache;
   }
-  cache = JSON.parse(readFileSync(dataFile, "utf8")) as StoreData;
+  cache = JSON.parse(readFileSync(file, "utf8")) as StoreData;
   if (migrate(cache)) persist(cache);
   return cache;
 }
 
 function persist(data: StoreData) {
-  if (!existsSync(dataDir)) mkdirSync(dataDir, { recursive: true });
-  writeFileSync(dataFile, JSON.stringify(data, null, 2), "utf8");
   cache = data;
+  const file = writableStoreFile();
+  writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
 }
 
 export function mutate<T>(fn: (data: StoreData) => T): T {
