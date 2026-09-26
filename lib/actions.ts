@@ -106,7 +106,7 @@ export async function submitSurvey(
     staffAssisted: boolean;
     filledAt: string | null;
   },
-  locale: Locale = "zh",
+  locale: Locale = "en",
 ) {
   const assignment = getAssignment(assignmentId);
   if (!assignment || assignment.status === "submitted") return { error: "cannot_submit" };
@@ -148,7 +148,7 @@ export async function createInvite(input: {
 }) {
   await requireStaff();
   const q = getQuestionnaire(input.questionnaireId);
-  if (!q || q.status !== "published") return { error: "只能为已发布问卷创建邀请" };
+  if (!q || q.status !== "published") return { error: "Invites can only be made for a published survey" };
   const inviteToken = token();
   const assignment = mutate((data) => {
     const row: AssignmentRecord = {
@@ -178,7 +178,7 @@ function blankSchema(title: string): QuestionnaireSchema {
     version: 1,
     title,
     intro: "",
-    sections: [{ id: uid("sec"), title: "第一部分", questions: [] }],
+    sections: [{ id: uid("sec"), title: "First section", questions: [] }],
   };
 }
 
@@ -196,13 +196,13 @@ export async function createQuestionnaire(title: string, duplicateFrom?: string)
     const row: QuestionnaireRecord = {
       id,
       familyId: id,
-      title: source ? `${source.title}（副本）` : title || "未命名问卷",
+      title: source ? `${source.title} (copy)` : title || "Untitled survey",
       intro: source?.intro ?? "",
       status: "draft",
       version: 1,
       schema: source
-        ? { ...structuredClone(source.schema), id: uid("schema"), version: 1, title: `${source.schema.title}（副本）` }
-        : blankSchema(title || "未命名问卷"),
+        ? { ...structuredClone(source.schema), id: uid("schema"), version: 1, title: `${source.schema.title} (copy)` }
+        : blankSchema(title || "Untitled survey"),
       settings: source ? { ...source.settings } : defaultSettings(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -217,9 +217,9 @@ export async function createQuestionnaire(title: string, duplicateFrom?: string)
 export async function saveQuestionnaire(id: string, patch: Partial<QuestionnaireRecord>) {
   await requireStaff();
   const current = getQuestionnaire(id);
-  if (!current) return { error: "问卷不存在" };
+  if (!current) return { error: "This survey is missing" };
   if (current.status === "published") {
-    return { error: "已发布问卷不能直接改题，请先复制为新版本" };
+    return { error: "A published survey cannot be edited. Copy it as a new version first" };
   }
   if (patch.schema) {
     const errors = validateSchema(patch.schema);
@@ -245,11 +245,11 @@ export async function saveQuestionnaire(id: string, patch: Partial<Questionnaire
 export async function publishQuestionnaire(id: string) {
   await requireStaff();
   const current = getQuestionnaire(id);
-  if (!current) return { error: "问卷不存在" };
+  if (!current) return { error: "This survey is missing" };
   const errors = validateSchema(current.schema);
   if (errors.length) return { error: errors[0] };
   if (current.schema.sections.every((section) => section.questions.length === 0)) {
-    return { error: "发布前请至少添加一道题" };
+    return { error: "Add at least one question before publishing" };
   }
   mutate((data) => {
     const row = data.questionnaires.find((item) => item.id === id);
@@ -282,7 +282,7 @@ export async function publishQuestionnaire(id: string) {
 export async function cloneNewVersion(id: string) {
   await requireStaff();
   const current = getQuestionnaire(id);
-  if (!current) return { error: "问卷不存在" };
+  if (!current) return { error: "This survey is missing" };
   const created = mutate((data) => {
     const next: QuestionnaireRecord = {
       ...structuredClone(current),
@@ -318,7 +318,7 @@ export async function saveStories(formData: FormData) {
   try {
     raw = JSON.parse(String(formData.get("payload") ?? ""));
   } catch {
-    return { error: "内容无效" };
+    return { error: "This content is not valid" };
   }
   const parsed = parseStoriesPack(raw);
   if (!parsed.ok) return { error: parsed.error };
@@ -333,10 +333,10 @@ export async function saveStories(formData: FormData) {
 export async function uploadStoryPhoto(formData: FormData) {
   await requireStaff();
   const file = formData.get("photo");
-  if (!(file instanceof File) || file.size === 0) return { error: "请选择一张照片" };
-  if (file.size > 8 * 1024 * 1024) return { error: "照片请小于 8MB" };
+  if (!(file instanceof File) || file.size === 0) return { error: "Choose a photo" };
+  if (file.size > 8 * 1024 * 1024) return { error: "Please use a photo under 8MB" };
   const match = file.name.toLowerCase().match(/\.(jpe?g|png|webp|gif)$/);
-  if (!match) return { error: "请上传 jpg、png、webp 或 gif" };
+  if (!match) return { error: "Upload a jpg, png, webp, or gif" };
   const label = String(formData.get("label") ?? "").trim() || file.name.replace(/\.[^.]+$/, "");
   const filename = `${uid("story")}${match[0]}`;
   const dir = path.join(process.cwd(), "public", "photos", "stories");
@@ -358,13 +358,13 @@ export async function uploadStoryPhoto(formData: FormData) {
 
 export async function createStaffUser(formData: FormData) {
   const me = await requireStaff();
-  if (me.role !== "admin") return { error: "仅管理员可添加工作人员" };
+  if (me.role !== "admin") return { error: "Only an admin can add staff" };
   const email = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
   const name = String(formData.get("name") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  if (!email || !name || password.length < 6) return { error: "请填写姓名、账号和至少6位密码" };
+  if (!email || !name || password.length < 6) return { error: "Enter a name, an account, and a password of at least 6 characters" };
   mutate((data) => {
     if (data.users.some((user) => user.email === email)) return;
     const salt = makeSalt();

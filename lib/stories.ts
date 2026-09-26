@@ -34,20 +34,19 @@ export type StoriesContent = {
 };
 
 export const builtInPhotos: StoryPhoto[] = [
-  { id: "walk", src: photos.walk, label: "一起走走" },
-  { id: "meal", src: photos.meal, label: "一桌热饭" },
-  { id: "together", src: photos.together, label: "并肩走走" },
-  { id: "chess", src: photos.chess, label: "坐下来下一盘" },
-  { id: "hands", src: photos.hands, label: "牵着手" },
-  { id: "light", src: photos.light, label: "阳光" },
-  { id: "plants", src: photos.plants, label: "花草" },
-  { id: "tea", src: photos.tea, label: "热茶" },
-  { id: "hero", src: photos.hero, label: "院子里的路" },
+  { id: "walk", src: photos.walk, label: "A walk together" },
+  { id: "meal", src: photos.meal, label: "A warm table" },
+  { id: "together", src: photos.together, label: "Side by side" },
+  { id: "chess", src: photos.chess, label: "Sit for a game" },
+  { id: "hands", src: photos.hands, label: "Holding hands" },
+  { id: "light", src: photos.light, label: "Sunlight" },
+  { id: "plants", src: photos.plants, label: "Plants" },
+  { id: "tea", src: photos.tea, label: "Hot tea" },
+  { id: "hero", src: photos.hero, label: "The path in the garden" },
 ];
 
-export function defaultStories(locale: "zh" | "en" = "zh"): StoriesContent {
-  if (locale === "en") {
-    return {
+export function defaultStories(): StoriesContent {
+  return {
       kicker: "Stories from home",
       heading: "Tap a word. Hear this page.",
       feelings: [
@@ -71,31 +70,6 @@ export function defaultStories(locale: "zh" | "en" = "zh"): StoriesContent {
         { id: "grid-chess", src: photos.chess, title: "Home" },
       ],
     };
-  }
-  return {
-    kicker: "院里的故事",
-    heading: "点一个词，听听这一页",
-    feelings: [
-      { id: "warm", key: "温暖", story: "一杯热茶，一句慢话。日子是被记得，才暖和的。" },
-      { id: "care", key: "照护", story: "照护不是机器本身，是有人记得您几点睡、爱吃什么。" },
-      { id: "hope", key: "希望", story: "明天可以更好。先把今天的感受，轻轻说出来。" },
-      { id: "wise", key: "智慧", story: "好的智慧不添乱。它省力，让人更自在。" },
-    ],
-    rail: [
-      { id: "rail-chess", src: photos.chess, title: "坐下来下一盘", line: "有人陪着，时间就不急。" },
-      { id: "rail-meal", src: photos.meal, title: "一桌热饭", line: "合不合口，只有您知道。" },
-      { id: "rail-walk", src: photos.walk, title: "一起走走", line: "院子里的阳光，刚刚好。" },
-      { id: "rail-together", src: photos.together, title: "并肩走走", line: "路上有伴，心里就暖。" },
-    ],
-    grid: [
-      { id: "grid-hands", src: photos.hands, title: "尊严" },
-      { id: "grid-together", src: photos.together, title: "陪伴" },
-      { id: "grid-light", src: photos.light, title: "安心" },
-      { id: "grid-meal", src: photos.meal, title: "餐食" },
-      { id: "grid-walk", src: photos.walk, title: "家属" },
-      { id: "grid-chess", src: photos.chess, title: "院里" },
-    ],
-  };
 }
 
 export type StoriesPack = {
@@ -104,7 +78,8 @@ export type StoriesPack = {
 };
 
 export function defaultStoriesPack(): StoriesPack {
-  return { zh: defaultStories("zh"), en: defaultStories("en") };
+  const english = defaultStories();
+  return { zh: english, en: english };
 }
 
 export function isStoriesPack(value: unknown): value is StoriesPack {
@@ -116,12 +91,12 @@ export function isStoriesPack(value: unknown): value is StoriesPack {
 export function asStoriesPack(value: unknown): StoriesPack {
   if (isStoriesPack(value)) {
     return {
-      zh: value.zh.feelings?.length ? value.zh : defaultStories("zh"),
-      en: value.en.feelings?.length ? value.en : defaultStories("en"),
+      zh: value.zh.feelings?.length ? value.zh : defaultStories(),
+      en: value.en.feelings?.length ? value.en : defaultStories(),
     };
   }
   if (value && typeof value === "object" && "kicker" in value) {
-    return { zh: value as StoriesContent, en: defaultStories("en") };
+    return { zh: value as StoriesContent, en: defaultStories() };
   }
   return defaultStoriesPack();
 }
@@ -131,22 +106,22 @@ function asText(value: unknown) {
 }
 
 export function parseStoriesPack(raw: unknown): { ok: true; pack: StoriesPack } | { ok: false; error: string } {
-  if (!raw || typeof raw !== "object") return { ok: false, error: "内容无效" };
+  if (!raw || typeof raw !== "object") return { ok: false, error: "This content is not valid" };
   const input = raw as Record<string, unknown>;
   const zh = parseStoriesPayload(input.zh ?? input);
   if (!zh.ok) return { error: zh.error, ok: false };
-  const en = parseStoriesPayload(input.en ?? defaultStories("en"));
+  const en = parseStoriesPayload(input.en ?? defaultStories());
   return {
     ok: true,
     pack: {
       zh: zh.stories,
-      en: en.ok ? en.stories : defaultStories("en"),
+      en: en.ok ? en.stories : defaultStories(),
     },
   };
 }
 
 export function parseStoriesPayload(raw: unknown): { ok: true; stories: StoriesContent } | { ok: false; error: string } {
-  if (!raw || typeof raw !== "object") return { ok: false, error: "内容无效" };
+  if (!raw || typeof raw !== "object") return { ok: false, error: "This content is not valid" };
   const input = raw as Record<string, unknown>;
   const feelings = Array.isArray(input.feelings)
     ? input.feelings
@@ -160,7 +135,7 @@ export function parseStoriesPayload(raw: unknown): { ok: true; stories: StoriesC
         })
         .filter((item) => item.key && item.story)
     : [];
-  if (feelings.length === 0) return { ok: false, error: "至少留下一个词和一段话" };
+  if (feelings.length === 0) return { ok: false, error: "Keep at least one word and one short story" };
 
   const rail = Array.isArray(input.rail)
     ? input.rail
@@ -192,8 +167,8 @@ export function parseStoriesPayload(raw: unknown): { ok: true; stories: StoriesC
   return {
     ok: true,
     stories: {
-      kicker: asText(input.kicker) || "院里的故事",
-      heading: asText(input.heading) || "点一个词，听听这一页",
+      kicker: asText(input.kicker) || "Stories from home",
+      heading: asText(input.heading) || "Tap a word. Hear this page.",
       feelings,
       rail,
       grid,

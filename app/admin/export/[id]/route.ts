@@ -8,10 +8,10 @@ function cell(raw: unknown): string {
   const rec = raw as Record<string, unknown>;
   if (typeof rec.text === "string") return rec.text;
   if (typeof rec.value === "string") {
-    return rec.value === "other" && rec.other ? `其他:${rec.other}` : rec.value;
+    return rec.value === "other" && rec.other ? `Other:${rec.other}` : rec.value;
   }
   if (Array.isArray(rec.values)) {
-    const extra = rec.other ? `;其他:${rec.other}` : "";
+    const extra = rec.other ? `;Other:${rec.other}` : "";
     return `${(rec.values as string[]).join("|")}${extra}`;
   }
   if (rec.cells && typeof rec.cells === "object") {

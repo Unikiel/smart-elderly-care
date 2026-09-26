@@ -2,21 +2,28 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import type { Album } from "@/lib/albums";
 import type { FrontSurvey } from "@/lib/store";
 import { coverForSurvey, photos } from "@/lib/photos";
 import { surveyHeading, surveyInvite, surveyTag } from "@/lib/i18n";
-import type { StoriesPack } from "@/lib/stories";
-import { LanguageSwitch } from "@/components/i18n/LanguageSwitch";
+import type { Essay } from "@/lib/essay";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { FlyPhoto } from "./FlyPhoto";
 import { MixLockup } from "./MixLockup";
 import { Reveal } from "./Reveal";
 import { Stories } from "./Stories";
 
-export function Landing({ surveys, stories }: { surveys: FrontSurvey[]; stories: StoriesPack }) {
+export function Landing({
+  surveys,
+  essay,
+  albums,
+}: {
+  surveys: FrontSurvey[];
+  essay: Essay | null;
+  albums: Album[];
+}) {
   const { locale, t } = useLocale();
   const [scrolled, setScrolled] = useState(false);
-  const chapter = locale === "en" && stories.en.feelings.length ? stories.en : stories.zh;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -32,45 +39,45 @@ export function Landing({ surveys, stories }: { surveys: FrontSurvey[]; stories:
           scrolled ? "bg-[#fff3d6]/88 shadow-[0_10px_40px_rgba(58,39,24,0.08)] backdrop-blur-md" : "bg-transparent"
         }`}
       >
-        <Link href="/" className="font-script text-[26px] leading-none">
-          {t.brand}
+        <Link href="/" className="max-w-[11rem] font-display text-[17px] font-bold leading-tight sm:max-w-none sm:text-[22px] md:text-[26px]">
+          {t.coverTitle}
         </Link>
-        <div className="flex items-center gap-4 text-[15px] text-[#8b5a32] md:gap-5">
-          <a href="#surveys" className="hidden hover:text-[#3a2718] sm:inline">
+        <div className="flex shrink-0 items-center gap-4 text-[15px] text-[#8b5a32] md:gap-5">
+          <a href="#surveys" className="hover:text-[#3a2718]">
             {t.navTalk}
           </a>
           <Link href="/login" className="hover:text-[#3a2718]">
             {t.navStaff}
           </Link>
-          <LanguageSwitch tone="warm" />
         </div>
       </nav>
 
       <header className="grid min-h-[calc(100dvh-72px)] items-stretch md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)]">
         <div className="flex flex-col justify-center bg-[linear-gradient(165deg,#fff7e4_0%,#ffd39a_58%,#f4a36a_100%)] px-5 py-12 md:px-12 lg:px-16">
           <Reveal eager delay={0}>
-            <p className="font-script text-[28px] leading-none text-[#c67a1a] md:text-[34px]">{t.heroKicker}</p>
+            <h1 className="font-script text-[52px] leading-none text-[#3a2718] md:text-[76px]">{t.heroName}</h1>
           </Reveal>
-          <Reveal eager delay={120}>
-            <div className="mt-5">
-              <MixLockup script={t.heroLines[0]} formal={t.heroLines[1]} />
+          <Reveal eager delay={180}>
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <a
+                href="#surveys"
+                className="inline-flex h-14 w-fit items-center gap-3 rounded-full bg-[#3a2718] px-6 text-[17px] text-[#fff3d6] transition-transform duration-500 hover:-translate-y-0.5"
+              >
+                {t.heroCta}
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f0b429] text-[#3a2718]">↓</span>
+              </a>
+              <a
+                href="#albums"
+                className="inline-flex h-14 w-fit items-center gap-3 rounded-full border border-[#3a2718]/30 bg-[#fff7e4] px-6 text-[17px] text-[#3a2718] transition-transform duration-500 hover:-translate-y-0.5"
+              >
+                {t.heroAlbum}
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f0b429] text-[#3a2718]">↓</span>
+              </a>
             </div>
-          </Reveal>
-          <Reveal eager delay={240}>
-            <p className="mt-6 max-w-md text-[18px] leading-8 text-[#6b3f1f]">{t.heroLead}</p>
-          </Reveal>
-          <Reveal eager delay={380}>
-            <a
-              href="#surveys"
-              className="mt-10 inline-flex h-14 w-fit items-center gap-3 rounded-full bg-[#3a2718] px-6 text-[17px] text-[#fff3d6] transition-transform duration-500 hover:-translate-y-0.5"
-            >
-              {t.heroCta}
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f0b429] text-[#3a2718]">↓</span>
-            </a>
           </Reveal>
         </div>
         <div className="relative min-h-[48vh] overflow-hidden md:min-h-full">
-          <FlyPhoto src={photos.hero} from="right" eager position="58% 32%" className="absolute inset-0 h-full w-full" />
+          <FlyPhoto src={photos.hero} from="right" eager position="center" className="absolute inset-0 h-full w-full" />
           <div
             className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(244,163,106,0.38)_0%,rgba(244,163,106,0.12)_22%,transparent_48%)]"
             aria-hidden="true"
@@ -83,7 +90,7 @@ export function Landing({ surveys, stories }: { surveys: FrontSurvey[]; stories:
         </div>
       </header>
 
-      <Stories content={chapter} />
+      <Stories essay={essay} albums={albums} />
 
       <section id="surveys" className="scroll-mt-16 border-t border-[#e0a35a]/35">
         <div className="mx-auto max-w-[1280px] px-5 pb-6 pt-16 md:px-12">
@@ -132,16 +139,6 @@ export function Landing({ surveys, stories }: { surveys: FrontSurvey[]; stories:
         )}
       </section>
 
-      <footer className="border-t border-[#e0a35a]/35">
-        <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-5 py-12 text-[15px] text-[#8b5a32] md:flex-row md:items-center md:justify-between md:px-12">
-          <p>{t.footer}</p>
-          <div className="flex items-center gap-5">
-            <Link href="/login" className="hover:text-[#3a2718]">
-              {t.navStaff}
-            </Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

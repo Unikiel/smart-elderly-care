@@ -4,7 +4,8 @@ import { aiDemandSchema } from "@/questionnaires/ai-demand";
 import { mealFollowupSchema } from "@/questionnaires/meal-followup";
 import { hashPassword, makeSalt } from "./auth-hash";
 import { token, uid } from "./ids";
-import { asStoriesPack, defaultStoriesPack, isStoriesPack, type StoriesPack, type StoryPhoto } from "./stories";
+import { asStoriesPack, defaultStories, defaultStoriesPack, isStoriesPack, type StoriesPack, type StoryPhoto } from "./stories";
+import { localizeQuestionnaire } from "./survey-locale";
 import type {
   AssignmentRecord,
   QuestionnaireRecord,
@@ -84,7 +85,7 @@ function seedAdmin(): UserRecord {
     email: SEED_ADMIN_LOGIN,
     passwordSalt: salt,
     passwordHash: hashPassword(SEED_ADMIN_PASSWORD, salt),
-    name: "院办管理员",
+    name: "Admin",
     role: "admin",
   };
 }
@@ -121,6 +122,36 @@ function migrate(data: StoreData) {
   }
   if (!Array.isArray(data.storyPhotos)) {
     data.storyPhotos = [];
+    dirty = true;
+  }
+
+  const cjk = /[\u4e00-\u9fff]/;
+  for (const questionnaire of data.questionnaires) {
+    const blob = `${questionnaire.title}\n${questionnaire.intro}\n${JSON.stringify(questionnaire.schema)}`;
+    if (!cjk.test(blob)) continue;
+    const next = localizeQuestionnaire(questionnaire, "en");
+    if (cjk.test(next.title) && cjk.test(questionnaire.title)) continue;
+    questionnaire.title = next.title;
+    questionnaire.intro = next.intro ?? questionnaire.intro;
+    questionnaire.schema = next.schema;
+    dirty = true;
+  }
+
+  if (cjk.test(JSON.stringify(data.stories ?? ""))) {
+    const english =
+      data.stories?.en && !cjk.test(JSON.stringify(data.stories.en)) ? data.stories.en : defaultStories();
+    data.stories = { zh: english, en: english };
+    dirty = true;
+  }
+
+  for (const user of data.users) {
+    if (!cjk.test(user.name)) continue;
+    user.name = user.role === "admin" ? "Admin" : "Staff";
+    dirty = true;
+  }
+  for (const photo of data.storyPhotos) {
+    if (!cjk.test(photo.label)) continue;
+    photo.label = "Photo";
     dirty = true;
   }
 
@@ -186,9 +217,9 @@ export function getStoriesPack(): StoriesPack {
   return asStoriesPack(read().stories);
 }
 
-export function getStories(locale: "zh" | "en" = "zh") {
+export function getStories() {
   const pack = getStoriesPack();
-  if (locale === "en" && pack.en.feelings.length > 0) return pack.en;
+  if (pack.en.feelings.length > 0) return pack.en;
   return pack.zh;
 }
 
@@ -262,11 +293,11 @@ export function listFrontSurveys(): FrontSurvey[] {
           (sum, section) => sum + section.questions.length,
           0,
         );
-        const tag = item.title.includes("餐食")
-          ? "追访问卷"
-          : item.title.includes("AI")
-            ? "AI 主问卷"
-            : "已发布问卷";
+        const tag = /meal|dining|餐食|伙食/i.test(item.title)
+          ? "Follow-up"
+          : /AI|智慧|elderly care/i.test(item.title)
+            ? "Care survey"
+            : "Open survey";
         return {
           id: item.id,
           title: item.title,

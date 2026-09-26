@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from "react";
 import { saveStories, uploadStoryPhoto } from "@/lib/actions";
 import { FullPhoto } from "@/components/media/FullPhoto";
-import type { Locale } from "@/lib/i18n";
 import type { StoriesContent, StoriesPack, StoryPhoto } from "@/lib/stories";
 
 function nid(prefix: string) {
@@ -18,24 +17,23 @@ export function StoriesEditor({
   library: StoryPhoto[];
 }) {
   const [pack, setPack] = useState(initial);
-  const [tab, setTab] = useState<Locale>("zh");
   const [photos, setPhotos] = useState(library);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const content = pack[tab];
+  const content = pack.en.feelings.length ? pack.en : pack.zh;
 
   function setContent(next: StoriesContent) {
-    setPack({ ...pack, [tab]: next });
+    setPack({ zh: next, en: next });
   }
 
   async function onSave() {
     setBusy(true);
     setMessage("");
     const form = new FormData();
-    form.set("payload", JSON.stringify(pack));
+    form.set("payload", JSON.stringify({ zh: content, en: content }));
     const result = await saveStories(form);
     setBusy(false);
-    setMessage(result.error ?? "已写上首页");
+    setMessage(result.error ?? "Saved to the home page");
   }
 
   async function onUpload(formData: FormData) {
@@ -49,43 +47,31 @@ export function StoriesEditor({
     }
     if (result.photo) {
       setPhotos((rows) => [...rows, result.photo]);
-      setMessage("照片已加入图库，可以选进故事里");
+      setMessage("The photo is in the library. You can use it in a story.");
     }
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
-        {(["zh", "en"] as Locale[]).map((item) => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => setTab(item)}
-            className={`rounded-full px-4 py-2 text-sm ${tab === item ? "bg-ink text-white" : "bg-white"}`}
-          >
-            {item === "zh" ? "中文" : "English"}
-          </button>
-        ))}
-      </div>
       <section className="space-y-3 rounded-[22px] bg-white p-5">
-        <h2 className="font-bold">标题</h2>
+        <h2 className="font-bold">Titles</h2>
         <input
           value={content.kicker}
           onChange={(event) => setContent({ ...content, kicker: event.target.value })}
           className="w-full rounded-full bg-canvas px-4 py-2"
-          placeholder="小标题，比如：院里的故事"
+          placeholder="Small title, such as: Stories from home"
         />
         <input
           value={content.heading}
           onChange={(event) => setContent({ ...content, heading: event.target.value })}
           className="w-full rounded-full bg-canvas px-4 py-2"
-          placeholder="大标题"
+          placeholder="Main title"
         />
       </section>
 
       <section className="space-y-4 rounded-[22px] bg-white p-5">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="font-bold">点一个词</h2>
+          <h2 className="font-bold">Tap a word</h2>
           <button
             type="button"
             className="rounded-full bg-canvas px-4 py-2 text-sm"
@@ -96,13 +82,13 @@ export function StoriesEditor({
               })
             }
           >
-            加一个词
+            Add a word
           </button>
         </div>
         {content.feelings.map((item, index) => (
           <div key={item.id} className="space-y-2 rounded-[18px] bg-canvas p-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-muted">词 {index + 1}</p>
+              <p className="text-sm text-muted">Word {index + 1}</p>
               <button
                 type="button"
                 className="text-sm text-muted"
@@ -113,7 +99,7 @@ export function StoriesEditor({
                   })
                 }
               >
-                去掉
+                Remove
               </button>
             </div>
             <input
@@ -127,7 +113,7 @@ export function StoriesEditor({
                 })
               }
               className="w-full rounded-full bg-white px-4 py-2"
-              placeholder="词，比如：温暖"
+              placeholder="A word, such as: Warmth"
             />
             <textarea
               value={item.story}
@@ -140,7 +126,7 @@ export function StoriesEditor({
                 })
               }
               className="min-h-24 w-full rounded-[18px] bg-white px-4 py-3"
-              placeholder="点这个词后，长者会看到的一段话"
+              placeholder="The short story someone sees after tapping this word"
             />
           </div>
         ))}
@@ -148,7 +134,7 @@ export function StoriesEditor({
 
       <section className="space-y-4 rounded-[22px] bg-white p-5">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="font-bold">横着滑的照片</h2>
+          <h2 className="font-bold">Sliding photos</h2>
           <button
             type="button"
             className="rounded-full bg-canvas px-4 py-2 text-sm"
@@ -162,7 +148,7 @@ export function StoriesEditor({
               })
             }
           >
-            加一张
+            Add a photo
           </button>
         </div>
         {content.rail.map((item) => (
@@ -191,7 +177,7 @@ export function StoriesEditor({
                 })
               }
               className="w-full rounded-full bg-white px-4 py-2"
-              placeholder="标题"
+              placeholder="Title"
             />
             <input
               value={item.line}
@@ -204,74 +190,33 @@ export function StoriesEditor({
                 })
               }
               className="w-full rounded-full bg-white px-4 py-2"
-              placeholder="一句短话"
+              placeholder="One short line"
             />
           </PhotoCard>
         ))}
       </section>
 
-      <section className="space-y-4 rounded-[22px] bg-white p-5">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="font-bold">院里相册</h2>
-          <button
-            type="button"
-            className="rounded-full bg-canvas px-4 py-2 text-sm"
-            onClick={() =>
-              setContent({
-                ...content,
-                grid: [...content.grid, { id: nid("grid"), src: photos[0]?.src ?? "", title: "" }],
-              })
-            }
-          >
-            加一张
-          </button>
-        </div>
-        {content.grid.map((item) => (
-          <PhotoCard
-            key={item.id}
-            src={item.src}
-            photos={photos}
-            onRemove={() =>
-              setContent({ ...content, grid: content.grid.filter((row) => row.id !== item.id) })
-            }
-            onSrc={(src) =>
-              setContent({
-                ...content,
-                grid: content.grid.map((row) => (row.id === item.id ? { ...row, src } : row)),
-              })
-            }
-          >
-            <input
-              value={item.title}
-              onChange={(event) =>
-                setContent({
-                  ...content,
-                  grid: content.grid.map((row) =>
-                    row.id === item.id ? { ...row, title: event.target.value } : row,
-                  ),
-                })
-              }
-              className="w-full rounded-full bg-white px-4 py-2"
-              placeholder="标题，比如：陪伴"
-            />
-          </PhotoCard>
-        ))}
+      <section className="rounded-[22px] bg-white p-5">
+        <h2 className="font-bold">Photo albums</h2>
+        <p className="mt-2 text-sm text-muted">
+          The home page albums are the folders inside docs. Each folder name is the album name.
+        </p>
       </section>
 
       <section className="space-y-3 rounded-[22px] bg-white p-5">
-        <h2 className="font-bold">把院里的照片加进图库</h2>
-        <p className="text-sm text-muted">上传后，上面每一段都可以选这张照片。</p>
+        <h2 className="font-bold">Add a photo to the library</h2>
+        <p className="text-sm text-muted">After you upload it, each section above can use this photo.</p>
         <form action={onUpload} className="flex flex-wrap items-end gap-3">
           <label className="text-sm">
-            叫它什么
-            <input name="label" className="mt-1 block rounded-full bg-canvas px-4 py-2" placeholder="比如：食堂" />
+            What to call it
+            <input name="label" className="mt-1 block rounded-full bg-canvas px-4 py-2" placeholder="For example: Dining room" />
           </label>
           <label className="text-sm">
-            照片
+            Photo
             <input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="mt-1 block" />
           </label>
           <button className="rounded-full bg-canvas px-4 py-2" disabled={busy}>
-            加入图库
+            Add to the library
           </button>
         </form>
       </section>
@@ -283,7 +228,7 @@ export function StoriesEditor({
           disabled={busy}
           className="rounded-full bg-ink px-5 py-2 text-white"
         >
-          {busy ? "正在写下…" : "写上首页"}
+          {busy ? "Saving…" : "Save to the home page"}
         </button>
         {message ? <p className="text-sm text-muted">{message}</p> : null}
       </div>
@@ -313,7 +258,7 @@ function PhotoCard({
       <div className="space-y-2">
         <div className="flex justify-end">
           <button type="button" className="text-sm text-muted" onClick={onRemove}>
-            去掉
+            Remove
           </button>
         </div>
         <select
@@ -328,14 +273,14 @@ function PhotoCard({
               {item.label}
             </option>
           ))}
-          <option value="__custom">用自己的图片地址</option>
+          <option value="__custom">Use my own image address</option>
         </select>
         {!known ? (
           <input
             value={src}
             onChange={(event) => onSrc(event.target.value)}
             className="w-full rounded-full bg-white px-4 py-2"
-            placeholder="图片地址，或先在下面上传"
+            placeholder="Image address, or upload one below"
           />
         ) : null}
         {children}

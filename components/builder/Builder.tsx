@@ -6,10 +6,10 @@ import type { Question, QuestionnaireRecord, Section } from "@/lib/survey-engine
 import { uid } from "@/lib/client-id";
 
 const types: { value: Question["type"]; label: string }[] = [
-  { value: "single", label: "单选" },
-  { value: "multi", label: "多选" },
-  { value: "matrix", label: "矩阵评价" },
-  { value: "longtext", label: "开放题" },
+  { value: "single", label: "One choice" },
+  { value: "multi", label: "Several choices" },
+  { value: "matrix", label: "Rating grid" },
+  { value: "longtext", label: "Open answer" },
 ];
 
 export function Builder({ initial }: { initial: QuestionnaireRecord }) {
@@ -26,7 +26,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
   const save = () => {
     start(async () => {
       const result = await saveQuestionnaire(initial.id, { title, intro, schema, settings });
-      setMessage(result.error ?? "已保存");
+      setMessage(result.error ?? "Saved");
     });
   };
 
@@ -35,7 +35,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm text-muted">
-            {initial.status === "published" ? "已发布" : initial.status === "draft" ? "草稿" : "已归档"} · v
+            {initial.status === "published" ? "Published" : initial.status === "draft" ? "Draft" : "Archived"} · v
             {initial.version}
           </p>
           <input
@@ -52,12 +52,12 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
               onClick={() => start(() => { void cloneNewVersion(initial.id); })}
               className="rounded-full bg-ink px-4 py-2 text-white"
             >
-              复制为新版本
+              Copy as a new version
             </button>
           ) : (
             <>
               <button type="button" disabled={pending} onClick={save} className="rounded-full bg-canvas px-4 py-2">
-                保存草稿
+                Save draft
               </button>
               <button
                 type="button"
@@ -66,12 +66,12 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
                   start(async () => {
                     await saveQuestionnaire(initial.id, { title, intro, schema, settings });
                     const result = await publishQuestionnaire(initial.id);
-                    setMessage(result.error ?? "已发布");
+                    setMessage(result.error ?? "Published");
                   })
                 }
                 className="rounded-full bg-ink px-4 py-2 text-white"
               >
-                发布
+                Publish
               </button>
             </>
           )}
@@ -85,7 +85,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
         onChange={(event) => setIntro(event.target.value)}
         rows={4}
         className="w-full rounded-[22px] bg-white p-4"
-        placeholder="问卷说明"
+        placeholder="A short note about this survey"
       />
 
       <div className="flex flex-wrap gap-4 rounded-[22px] bg-white p-4 text-sm">
@@ -96,7 +96,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
             checked={settings.anonymousDefault}
             onChange={(event) => setSettings({ ...settings, anonymousDefault: event.target.checked })}
           />
-          默认匿名
+          Anonymous by default
         </label>
         <label className="flex items-center gap-2">
           <input
@@ -105,7 +105,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
             checked={settings.allowStaffAssisted}
             onChange={(event) => setSettings({ ...settings, allowStaffAssisted: event.target.checked })}
           />
-          允许工作人员代填
+          A staff member may help fill this in
         </label>
         <label className="flex items-center gap-2">
           <input
@@ -114,7 +114,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
             checked={settings.requirePin}
             onChange={(event) => setSettings({ ...settings, requirePin: event.target.checked })}
           />
-          需要填写码
+          Ask for an entry code
         </label>
       </div>
 
@@ -137,7 +137,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
                 className="text-sm text-muted"
                 onClick={() => setSections(sections.filter((item) => item.id !== section.id))}
               >
-                删除部分
+                Delete section
               </button>
             ) : null}
           </div>
@@ -179,11 +179,11 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
                     {
                       id: uid("q"),
                       type: "single",
-                      title: "新题目",
+                      title: "New question",
                       required: true,
                       options: [
-                        { value: "a", label: "选项 A" },
-                        { value: "b", label: "选项 B" },
+                        { value: "a", label: "Choice A" },
+                        { value: "b", label: "Choice B" },
                       ],
                     },
                   ],
@@ -191,7 +191,7 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
                 setSections(next);
               }}
             >
-              添加题目
+              Add a question
             </button>
           ) : null}
         </section>
@@ -202,10 +202,10 @@ export function Builder({ initial }: { initial: QuestionnaireRecord }) {
           type="button"
           className="rounded-full bg-white px-4 py-2"
           onClick={() =>
-            setSections([...sections, { id: uid("sec"), title: "新的部分", questions: [] }])
+            setSections([...sections, { id: uid("sec"), title: "New section", questions: [] }])
           }
         >
-          添加部分
+          Add a section
         </button>
       ) : null}
     </div>
@@ -247,11 +247,11 @@ function QuestionEditor({
             checked={Boolean(question.required)}
             onChange={(event) => onChange({ ...question, required: event.target.checked })}
           />
-          必填
+          Required
         </label>
         {!locked ? (
           <button type="button" onClick={onRemove} className="ml-auto text-sm text-muted">
-            删除
+            Delete
           </button>
         ) : null}
       </div>
@@ -285,11 +285,11 @@ function QuestionEditor({
                 checked={Boolean(question.allowOther)}
                 onChange={(event) => onChange({ ...question, allowOther: event.target.checked })}
               />
-              允许其他
+              Allow an other answer
             </label>
             {question.type === "multi" ? (
               <label className="flex items-center gap-1">
-                最多
+                Up to
                 <input
                   disabled={locked}
                   type="number"
@@ -303,7 +303,7 @@ function QuestionEditor({
                   }
                   className="w-16 rounded-full bg-white px-2 py-1"
                 />
-                项
+                choices
               </label>
             ) : null}
             {!locked ? (
@@ -312,11 +312,11 @@ function QuestionEditor({
                 onClick={() =>
                   onChange({
                     ...question,
-                    options: [...(question.options ?? []), { value: uid("opt"), label: "新选项" }],
+                    options: [...(question.options ?? []), { value: uid("opt"), label: "New choice" }],
                   })
                 }
               >
-                加选项
+                Add a choice
               </button>
             ) : null}
           </div>
@@ -325,7 +325,7 @@ function QuestionEditor({
       {question.type === "matrix" && (
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <div>
-            <p className="text-sm text-muted">评价行</p>
+            <p className="text-sm text-muted">Rows</p>
             {(question.rows ?? []).map((row, index) => (
               <input
                 key={row.value}
@@ -346,27 +346,27 @@ function QuestionEditor({
                 onClick={() =>
                   onChange({
                     ...question,
-                    rows: [...(question.rows ?? []), { value: uid("row"), label: "新评价项" }],
+                    rows: [...(question.rows ?? []), { value: uid("row"), label: "New row" }],
                     scale: question.scale?.length
                       ? question.scale
                       : [
-                          { value: "very", label: "很满意" },
-                          { value: "ok", label: "还可以" },
-                          { value: "mid", label: "一般" },
-                          { value: "low", label: "不太满意" },
-                          { value: "bad", label: "不满意" },
+                          { value: "very", label: "Very satisfied" },
+                          { value: "ok", label: "Quite all right" },
+                          { value: "mid", label: "So-so" },
+                          { value: "low", label: "Not very satisfied" },
+                          { value: "bad", label: "Not satisfied" },
                         ],
                   })
                 }
               >
-                加一行
+                Add a row
               </button>
             ) : null}
           </div>
         </div>
       )}
       <label className="mt-3 block text-sm text-muted">
-        仅当某题选择特定项时显示
+        Show only when another question has a chosen answer
         <select
           disabled={locked}
           value={question.showIf?.questionId ?? ""}
@@ -380,7 +380,7 @@ function QuestionEditor({
           }
           className="mt-1 block w-full rounded-full bg-white px-3 py-1"
         >
-          <option value="">无跳题</option>
+          <option value="">Always show</option>
           {allQuestions
             .filter((item) => item.id !== question.id)
             .map((item) => (
@@ -402,7 +402,7 @@ function QuestionEditor({
                 },
               })
             }
-            placeholder="选项值，逗号分隔，如 yes,maybe"
+            placeholder="Answer values, separated by commas, such as yes,maybe"
             className="mt-2 w-full rounded-full bg-white px-3 py-1"
           />
         ) : null}

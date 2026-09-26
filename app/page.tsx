@@ -1,10 +1,11 @@
 import { Landing } from "@/components/landing/Landing";
-import { getStoriesPack, listFrontSurveys } from "@/lib/store";
+import { listAlbums } from "@/lib/albums";
+import { readEssay } from "@/lib/essay";
+import { listFrontSurveys } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
 export default function Home() {
   const surveys = listFrontSurveys();
-  const stories = getStoriesPack();
-  return <Landing surveys={surveys} stories={stories} />;
+  return <Landing surveys={surveys} essay={readEssay()} albums={listAlbums()} />;
 }

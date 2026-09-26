@@ -18,7 +18,7 @@ export default async function NewQuestionnairePage() {
       <form
         action={async (formData) => {
           "use server";
-          await createQuestionnaire(String(formData.get("title") ?? "未命名问卷"));
+          await createQuestionnaire(String(formData.get("title") ?? "Untitled survey"));
         }}
         className="space-y-4 rounded-[28px] bg-card p-6 shadow-[0_18px_50px_rgba(42,21,64,0.08)]"
       >

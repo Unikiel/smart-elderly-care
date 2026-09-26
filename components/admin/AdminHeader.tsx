@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "@/lib/actions";
-import { LanguageSwitch } from "@/components/i18n/LanguageSwitch";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 
 export function AdminHeader({ name }: { name: string }) {
@@ -41,7 +40,6 @@ export function AdminHeader({ name }: { name: string }) {
           })}
         </nav>
         <div className="flex items-center gap-4">
-          <LanguageSwitch tone="dark" />
           <form action={logoutAction}>
             <button className="text-sm text-[#e0b67a] hover:text-[#fff3d6]">{t.adminLogout}</button>
           </form>

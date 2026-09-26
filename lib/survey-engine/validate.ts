@@ -8,7 +8,7 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" ? (value as Record<string, unknown>) : null;
 }
 
-export function validateQuestion(question: Question, raw: unknown, locale: Locale = "zh"): string | null {
+export function validateQuestion(question: Question, raw: unknown, locale: Locale = "en"): string | null {
   if (!question.required && (raw == null || raw === "")) return null;
   const rec = asRecord(raw);
   const t = copy[locale];
@@ -55,7 +55,7 @@ export function validateQuestion(question: Question, raw: unknown, locale: Local
 export function validateAnswers(
   schema: QuestionnaireSchema,
   answers: Answers,
-  locale: Locale = "zh",
+  locale: Locale = "en",
 ): QuestionError[] {
   return visibleQuestions(schema, answers)
     .map((question) => {
@@ -67,28 +67,28 @@ export function validateAnswers(
 
 export function validateSchema(schema: QuestionnaireSchema): string[] {
   const errors: string[] = [];
-  if (!schema.title.trim()) errors.push("请填写问卷标题");
-  if (schema.sections.length === 0) errors.push("至少需要一个部分");
+  if (!schema.title.trim()) errors.push("Enter a survey title");
+  if (schema.sections.length === 0) errors.push("Add at least one section");
   const ids = new Set<string>();
   for (const section of schema.sections) {
-    if (!section.title.trim()) errors.push("部分标题不能为空");
+    if (!section.title.trim()) errors.push("A section needs a title");
     for (const question of section.questions) {
-      if (!question.title.trim()) errors.push("题目不能为空");
-      if (ids.has(question.id)) errors.push(`题目编号重复：${question.id}`);
+      if (!question.title.trim()) errors.push("A question needs a title");
+      if (ids.has(question.id)) errors.push(`This question id is repeated: ${question.id}`);
       ids.add(question.id);
       if ((question.type === "single" || question.type === "multi") && (question.options?.length ?? 0) < 2) {
-        errors.push(`${question.title || question.id} 至少需要两个选项`);
+        errors.push(`${question.title || question.id} needs at least two choices`);
       }
       if (question.type === "multi" && question.maxSelect != null && question.maxSelect < 1) {
-        errors.push(`${question.title || question.id} 最多选择数无效`);
+        errors.push(`${question.title || question.id} has an invalid maximum`);
       }
       if (question.type === "matrix" && ((question.rows?.length ?? 0) < 1 || (question.scale?.length ?? 0) < 2)) {
-        errors.push(`${question.title || question.id} 矩阵题需要行和量表`);
+        errors.push(`${question.title || question.id} needs rows and a scale`);
       }
       if (question.showIf && !ids.has(question.showIf.questionId) && question.showIf.questionId !== question.id) {
         const known = flattenIds(schema);
         if (!known.has(question.showIf.questionId)) {
-          errors.push(`${question.title || question.id} 跳题逻辑指向不存在的题目`);
+          errors.push(`${question.title || question.id} points at a question that does not exist`);
         }
       }
     }

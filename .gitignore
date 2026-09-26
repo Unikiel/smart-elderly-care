@@ -44,3 +44,6 @@ next-env.d.ts
 /data/store.json
 /.tmp
 debug.log
+
+# local notes and source photos
+/docs

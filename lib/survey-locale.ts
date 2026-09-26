@@ -261,10 +261,11 @@ function locSection(section: Section, pack: Pack): Section {
   };
 }
 
-export function localizeSchema(schema: QuestionnaireSchema, locale: Locale): QuestionnaireSchema {
-  if (locale !== "en") return schema;
+export function localizeSchema(schema: QuestionnaireSchema, _locale: Locale = "en"): QuestionnaireSchema {
   const pack = packFor(schema);
   if (!pack) return schema;
+  const blob = JSON.stringify(schema);
+  if (!/[\u4e00-\u9fff]/.test(blob)) return schema;
   return {
     ...schema,
     title: pack.title,
@@ -283,16 +284,15 @@ export function localizeQuestionnaire(questionnaire: QuestionnaireRecord, locale
   };
 }
 
-export function surveyHeading(title: string, locale: Locale) {
-  if (locale === "zh") return title;
-  if (title.includes("餐食") || title.includes("伙食") || /meal|dining/i.test(title)) return mealFollowupEn.title;
-  if (title.includes("AI") || title.includes("智慧") || /care|ai/i.test(title)) return aiDemandEn.title;
+export function surveyHeading(title: string, _locale?: Locale) {
+  if (/meal|dining|餐食|伙食/i.test(title) && /[\u4e00-\u9fff]/.test(title)) return mealFollowupEn.title;
+  if (/智慧/.test(title) || (/\bAI\b/.test(title) && /[\u4e00-\u9fff]/.test(title))) return aiDemandEn.title;
   return title;
 }
 
-export function surveyIntro(title: string, intro: string, locale: Locale) {
-  if (locale !== "en") return intro;
-  if (title.includes("餐食") || title.includes("伙食") || /meal|dining/i.test(title)) return mealFollowupEn.intro;
-  if (title.includes("AI") || title.includes("智慧") || /care|ai/i.test(title)) return aiDemandEn.intro;
+export function surveyIntro(title: string, intro: string, _locale?: Locale) {
+  if (!/[\u4e00-\u9fff]/.test(intro) && !/[\u4e00-\u9fff]/.test(title)) return intro;
+  if (/meal|dining|餐食|伙食/i.test(title)) return mealFollowupEn.intro;
+  if (/智慧/.test(title) || /\bAI\b/.test(title)) return aiDemandEn.intro;
   return intro;
 }

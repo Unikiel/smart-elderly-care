@@ -32,34 +32,21 @@
   --color-plum: var(--plum);
   --color-pending: var(--pending);
   --color-coral: var(--coral);
-  --font-sans: var(--font-jakarta), var(--font-noto), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-print-zh), var(--font-print-en), ui-serif, serif;
-  --font-script: var(--font-hand-zh), var(--font-hand-en), cursive;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-print-en), ui-serif, serif;
+  --font-script: var(--font-hand-en), cursive;
 }
 
 .font-script {
   font-weight: 400;
-  font-family: var(--font-hand-zh), var(--font-hand-en), cursive;
-}
-
-.font-display {
-  font-family: var(--font-print-zh), var(--font-print-en), ui-serif, serif;
-}
-
-html.locale-zh .font-display {
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-html.locale-en .font-script {
-  font-family: var(--font-hand-en), var(--font-hand-zh), cursive;
+  font-family: var(--font-hand-en), cursive;
   letter-spacing: 0;
   font-kerning: normal;
   font-variant-ligatures: common-ligatures;
 }
 
-html.locale-en .font-display {
-  font-family: var(--font-print-en), var(--font-print-zh), ui-serif, serif;
+.font-display {
+  font-family: var(--font-print-en), ui-serif, serif;
   letter-spacing: -0.02em;
 }
 

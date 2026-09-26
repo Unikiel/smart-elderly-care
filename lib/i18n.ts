@@ -1,169 +1,21 @@
-export type Locale = "zh" | "en";
+export type Locale = "en";
 
-export const locales: Locale[] = ["zh", "en"];
+export const locales: Locale[] = ["en"];
 
 export const copy = {
-  zh: {
-    brand: "智养",
-    navTalk: "想说说话",
-    navNew: "生成新问卷",
-    navStaff: "工作人员",
-    heroKicker: "智养",
-    heroLines: ["听懂每一次", "照护。"],
-    heroLead: "今天也想听听您的日子。家人在，院里在，您被记得。",
-    heroCta: "我想说说话",
-    surveysKicker: "想说说话",
-    surveysLines: ["从一件", "您在乎的事开始"],
-    surveysEmpty: "现在还没有开放的问卷。",
-    start: "开始填写",
-    footer: "智养 · 给长者、家属和院办的问卷",
-    tagFollowup: "追访问卷",
-    tagAi: "照护问卷",
-    tagOpen: "已发布问卷",
-    loginKicker: "工作人员",
-    loginTitle: "登录管理台",
-    loginAccount: "账号",
-    loginPassword: "密码",
-    loginEnter: "进入",
-    loginHint: "本地演示账号已预填",
-    loginBack: "返回首页",
-    loginSide: ["院办看见", "长者被听见"],
-    splashLead: "一步一题。随时可返回。",
-    splashPin: "填写码",
-    playerStart: "开始填写",
-    playerHome: "回到首页",
-    playerRole: "您的身份",
-    playerAnon: "匿名填写",
-    playerAssist: "工作人员协助填写",
-    playerBegin: "开始答题",
-    playerNeedRole: "请先选择身份",
-    playerEmpty: "这份问卷还没有题目。",
-    playerProgress: (step: number, total: number) => `第 ${step} 题，一共 ${total} 题。你可以随时回头改。`,
-    playerCount: (step: number, total: number) => `第 ${step} / ${total} 题`,
-    playerAssistBadge: "工作人员协助",
-    playerPreview: "预览",
-    playerPrev: "上一题",
-    playerNext: "下一题",
-    playerSubmit: "提交",
-    playerPreviewDone: "完成预览",
-    playerThanksTitle: "谢谢您的填写",
-    playerThanksSide: "谢谢你把心里话说出来",
-    playerThanksCaption: "每一份答案都在把院里的明天推近一点。",
-    playerThanksPreview: "这是预览提交，答案不会保存。",
-    playerThanksBody: "您的意见会帮助我们更真实地了解长者需求。",
-    playerThanksMark: "谢",
-    roles: {
-      elder: "长者本人",
-      family: "长者家属",
-      staff: "养老院工作人员",
-      other: "其他",
-    },
-    adminMorning: "早上好",
-    adminNavInbox: "答卷",
-    adminNavSurveys: "问卷",
-    adminNavStories: "故事",
-    adminNavExport: "导出",
-    adminNavPeople: "人员",
-    adminLogout: "退出",
-    storiesAdminTitle: "首页故事",
-    storiesAdminHelp: "中文和英文可以分开写。首页会按访客选的语言来显示。",
-    storiesTabZh: "中文",
-    storiesTabEn: "English",
-    playerWriteHere: "请在这里写下来",
-    playerWriteOther: "请填写其他",
-    playerPicked: (n: number, max: number) => `已选 ${n} / ${max}`,
-    validPickOne: "请选择一项",
-    validFillOther: "请填写“其他”内容",
-    validPickLeast: "请至少选择一项",
-    validMaxSelect: (n: number) => `最多选${n}项`,
-    validMatrix: "请为每一行选择评价",
-    validWrite: "请填写内容",
-    errInviteInvalid: "邀请链接无效",
-    errSurveyClosed: "这份问卷尚未开放",
-    errPinWrong: "填写码不正确",
-    errAlreadySubmitted: "这份问卷已经提交过了",
-    errLoginBad: "账号或密码不正确",
-    adminInvites: "邀请数",
-    adminFilling: "填写中",
-    adminCollected: "已回收",
-    adminNewInvite: "发出新邀请",
-    adminSurvey: "问卷",
-    adminPinOptional: "填写码（可选）",
-    adminMakeLink: "生成链接",
-    adminDemoLinks: "演示链接：/s/ai-demo 与 /s/meal-demo",
-    adminQueue: "填写队列",
-    adminUnknownSurvey: "未知问卷",
-    adminCode: "码",
-    adminView: "查看",
-    adminPending: "待填写",
-    adminInProgress: "填写中",
-    adminSubmitted: "已提交",
-    adminDraft: "草稿",
-    adminPublished: "已发布",
-    adminArchived: "已归档",
-    adminRepliesOf: "份答卷",
-    adminEdit: "编辑",
-    adminPreview: "预览",
-    adminCopy: "复制",
-    adminArchive: "归档",
-    adminSurveysTitle: "问卷",
-    adminExportTitle: "导出",
-    adminExportHelp: "按问卷导出 CSV，可用 Excel 打开。中文已加 BOM。",
-    adminDownloadCsv: "下载 CSV",
-    adminPeopleTitle: "人员",
-    adminRoleAdmin: "管理员",
-    adminRoleStaff: "工作人员",
-    adminAddStaff: "添加工作人员",
-    adminName: "姓名",
-    adminAdd: "添加",
-    adminNewKicker: "生成新问卷",
-    adminNewTitle: "从空白开始，或复制一份已有的",
-    adminNewLead: "发布后，首页会自动多出一张可选卡片。长者不必找链接，直接在落地页选。",
-    adminBlank: "空白问卷",
-    adminSurveyTitle: "问卷标题",
-    adminTitlePh: "例如：夜间巡房体验问卷",
-    adminCreateEdit: "创建并进入编辑",
-    adminCopyExisting: "复制已有问卷",
-    adminUseTemplate: "以此为模板",
-    adminPasswordPh: "密码（至少6位）",
-    adminBackQueue: "返回队列",
-    adminAnon: "匿名",
-    adminNamed: "实名",
-    adminNoRole: "未填身份",
-    adminAssistedFill: "工作人员协助",
-    adminSelfFill: "本人填写",
-    adminOtherLabel: "其他",
-    adminReport: "报告",
-    adminReportKicker: "院里看见的汇总",
-    adminReportEmpty: "还没有回收的答卷。发出邀请并填写后，这里会一题一题地汇总。",
-    adminReportAnswered: (n: number, total: number) => `${n} / ${total} 人作答`,
-    adminReportSkipped: (n: number) => `${n} 人未答`,
-    adminReportWritten: "写下的话",
-    adminReportReplies: "每一份答卷",
-    adminBackSurveys: "返回问卷",
-    adminReportWho: "谁在填写",
-    adminReportOpen: "打开这份答卷",
-    adminReportCsvHint: "如需表格，仍可下载 CSV。",
-    adminReportFilling: "填写中",
-    adminReportNoNotes: "还没有人写下这句话。",
-    errCannotSave: "无法保存",
-    errCannotSubmit: "无法提交",
-    errSurveyMissing: "问卷不存在",
-  },
-  en: {
-    brand: "智养",
-    navTalk: "Talk with us",
+    en: {
+    brand: "Care",
+    navTalk: "Survey",
     navNew: "New survey",
-    navStaff: "Staff",
-    heroKicker: "Care",
-    heroLines: ["Hear every", "act of care."],
-    heroLead: "We would like to hear about your day. Family is here. Home is here. You are remembered.",
-    heroCta: "I would like to talk",
+    navStaff: "Admin",
+    coverTitle: "Rethinking Technology for Elders",
+    heroName: "Michael Higasi",
+    heroCta: "Survey",
+    heroAlbum: "Album",
     surveysKicker: "Talk with us",
     surveysLines: ["Begin with", "something that matters."],
     surveysEmpty: "No surveys are open just now.",
     start: "Begin",
-    footer: "Care · surveys for elders, families, and staff",
     tagFollowup: "Follow-up",
     tagAi: "Care survey",
     tagOpen: "Open survey",
@@ -213,8 +65,7 @@ export const copy = {
     adminNavPeople: "People",
     adminLogout: "Sign out",
     storiesAdminTitle: "Home stories",
-    storiesAdminHelp: "Write Chinese and English separately. The home page follows the language a visitor chooses.",
-    storiesTabZh: "中文",
+    storiesAdminHelp: "Write the stories for the home page. Visitors see this text.",
     storiesTabEn: "English",
     playerWriteHere: "Please write here",
     playerWriteOther: "Please write the other answer",
@@ -303,24 +154,15 @@ export { surveyHeading, surveyIntro } from "./survey-locale";
 
 export function surveyTag(title: string, locale: Locale) {
   const text = copy[locale];
-  if (title.includes("餐食") || title.includes("伙食") || /meal|dining/i.test(title)) return text.tagFollowup;
-  if (title.includes("AI") || title.includes("智慧") || /care|ai/i.test(title)) return text.tagAi;
+  if (/meal|dining|餐食|伙食/i.test(title)) return text.tagFollowup;
+  if (/elderly care|智慧|AI/i.test(title)) return text.tagAi;
   return text.tagOpen;
 }
 
-export function surveyInvite(title: string, locale: Locale) {
-  if (locale === "en") {
-    if (title.includes("餐食") || title.includes("伙食") || /meal|dining/i.test(title)) {
-      return "Does the food taste right? We would like to improve it slowly.";
-    }
-    if (title.includes("AI") || title.includes("智慧") || /care|ai/i.test(title)) {
-      return "Is intelligent care easy to live with? We would like to hear about your days.";
-    }
-    return "We would like to hear how this feels for you.";
-  }
-  if (title.includes("餐食") || title.includes("伙食") || /meal|dining/i.test(title)) return "饭菜合不合口，想慢慢改进。";
-  if (title.includes("AI") || title.includes("智慧") || /care|ai/i.test(title)) return "智能照料好不好用，想听听您的日子。";
-  return "今天也想听听您的感受。";
+export function surveyInvite(title: string, _locale?: Locale) {
+  if (/meal|dining|餐食|伙食/i.test(title)) return "Does the food taste right? We would like to improve it slowly.";
+  if (/elderly care|智慧|AI/i.test(title)) return "Is intelligent care easy to live with? We would like to hear about your days.";
+  return "We would like to hear how this feels for you.";
 }
 
 export function visitorError(code: string, t: (typeof copy)[Locale]) {

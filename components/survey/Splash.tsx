@@ -5,7 +5,6 @@ import Link from "next/link";
 import { startInvite } from "@/lib/actions";
 import { FullPhoto } from "@/components/media/FullPhoto";
 import { coverForSurvey } from "@/lib/photos";
-import { LanguageSwitch } from "@/components/i18n/LanguageSwitch";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { surveyHeading, visitorError } from "@/lib/i18n";
 
@@ -34,7 +33,6 @@ export function Splash({
           <Link href="/" className="min-h-10 text-[16px] font-medium text-muted hover:text-ink">
             ← {t.playerHome}
           </Link>
-          <LanguageSwitch />
         </div>
         <p className="font-script text-[28px] leading-none text-mint-deep">{t.brand}</p>
         <h1 className="mt-4 max-w-md font-display text-3xl font-bold leading-snug md:text-5xl">{heading}</h1>

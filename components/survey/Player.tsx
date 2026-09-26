@@ -10,7 +10,6 @@ import { visitorError } from "@/lib/i18n";
 import { localizeQuestionnaire } from "@/lib/survey-locale";
 import { validateQuestion } from "@/lib/survey-engine/validate";
 import { visibleQuestions } from "@/lib/survey-engine/visibility";
-import { LanguageSwitch } from "@/components/i18n/LanguageSwitch";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { QuestionWidget } from "./widgets";
 
@@ -47,7 +46,6 @@ function HomeBar({ href = "/", extra }: { href?: string; extra?: ReactNode }) {
         ← {t.playerHome}
       </Link>
       <div className="flex items-center gap-2">
-        <LanguageSwitch />
         {extra}
       </div>
     </div>

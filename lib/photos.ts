@@ -22,7 +22,7 @@ export function coverForSurvey(title: string, index: number) {
 }
 
 export function invitationForSurvey(title: string) {
-  if (title.includes("餐食") || title.includes("伙食")) return "饭菜合不合口，想慢慢改进。";
-  if (title.includes("AI") || title.includes("智慧")) return "智能照料好不好用，想听听您的日子。";
-  return "今天也想听听您的感受。";
+  if (/meal|dining|餐食|伙食/i.test(title)) return "Does the food taste right? We would like to improve it slowly.";
+  if (/AI|智慧|elderly care/i.test(title)) return "Is intelligent care easy to live with? We would like to hear about your days.";
+  return "We would like to hear how this feels for you.";
 }
