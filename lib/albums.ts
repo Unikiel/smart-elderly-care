@@ -4,7 +4,7 @@ import path from "path";
 const imageFile = /\.(jpe?g|png|webp|heic|heif)$/i;
 
 const coverFile: Record<string, string> = {
-  "affluent suburb": "IMG_8449.jpg",
+  "affluent suburb": "reception.jpg",
   "mid-range community": "Weixin Image_20260707152815_13_333.jpg",
   "upscale urban": "IMG_8401.jpg",
 };

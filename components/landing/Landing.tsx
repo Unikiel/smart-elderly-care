@@ -52,7 +52,7 @@ export function Landing({
         </div>
       </nav>
 
-      <header className="grid min-h-[calc(100dvh-72px)] items-stretch md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)]">
+      <header id="home" className="grid min-h-[calc(100dvh-72px)] items-stretch md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)]">
         <div className="flex flex-col justify-center bg-[linear-gradient(165deg,#fff7e4_0%,#ffd39a_58%,#f4a36a_100%)] px-5 py-12 md:px-12 lg:px-16">
           <Reveal eager delay={0}>
             <h1 className="font-script text-[52px] leading-none text-[#3a2718] md:text-[76px]">{t.heroName}</h1>
@@ -94,8 +94,11 @@ export function Landing({
 
       <section id="surveys" className="scroll-mt-16 border-t border-[#e0a35a]/35">
         <div className="mx-auto max-w-[1280px] px-5 pb-6 pt-16 md:px-12">
+          <a href="#home" className="text-[16px] font-medium text-[#8b5a32] hover:text-[#3a2718]">
+            ← {t.backHome}
+          </a>
           <Reveal>
-            <p className="font-script text-[28px] leading-none text-[#c67a1a] md:text-[34px]">{t.surveysKicker}</p>
+            <p className="mt-4 font-script text-[28px] leading-none text-[#c67a1a] md:text-[34px]">{t.surveysKicker}</p>
             <div className="mt-4">
               <MixLockup script={t.surveysLines[0]} formal={t.surveysLines[1]} as="h2" />
             </div>

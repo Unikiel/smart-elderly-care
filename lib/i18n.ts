@@ -12,6 +12,7 @@ export const copy = {
     heroName: "Michael Higasi",
     heroCta: "Survey",
     heroAlbum: "Album",
+    backHome: "Home",
     surveysKicker: "Talk with us",
     surveysLines: ["Begin with", "something that matters."],
     surveysEmpty: "No surveys are open just now.",
