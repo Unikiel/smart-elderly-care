@@ -1,6 +1,7 @@
 import { inflateRawSync } from "zlib";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import path from "path";
+import publishedEssay from "@/content/essay.json";
 
 export type EssayReference = {
   citation: string;
@@ -65,35 +66,42 @@ function referenceOf(line: string): EssayReference {
   return { citation: line.replace(match[0], "").replace(/\s+$/, ""), href };
 }
 
+function essayFromBuffer(buf: Buffer): Essay | null {
+  const xml = zipEntry(buf, "word/document.xml")?.toString("utf8");
+  if (!xml) return null;
+  const paragraphs = paragraphRuns(xml)
+    .map((runs) => runs.map((run) => run.trim()).filter(Boolean))
+    .filter((runs) => runs.length > 0);
+  const [heading, ...rest] = paragraphs;
+  if (!heading) return null;
+  const [titleLine, author] = heading;
+  const split = titleLine.split(/:\s+/);
+  const title = split[0] ?? titleLine;
+  const subtitle = split.slice(1).join(": ");
+  const body: string[] = [];
+  const references: EssayReference[] = [];
+  let inReferences = false;
+  for (const runs of rest) {
+    const line = runs.join(" ").replace(/\s+/g, " ").trim();
+    if (!line) continue;
+    if (line === "References") {
+      inReferences = true;
+      continue;
+    }
+    if (inReferences) references.push(referenceOf(line));
+    else body.push(line);
+  }
+  return { title, subtitle, author: author ?? "", paragraphs: body, references };
+}
+
 export function readEssay(): Essay | null {
   try {
-    const buf = readFileSync(essayPath);
-    const xml = zipEntry(buf, "word/document.xml")?.toString("utf8");
-    if (!xml) return null;
-    const paragraphs = paragraphRuns(xml)
-      .map((runs) => runs.map((run) => run.trim()).filter(Boolean))
-      .filter((runs) => runs.length > 0);
-    const [heading, ...rest] = paragraphs;
-    if (!heading) return null;
-    const [titleLine, author] = heading;
-    const split = titleLine.split(/:\s+/);
-    const title = split[0] ?? titleLine;
-    const subtitle = split.slice(1).join(": ");
-    const body: string[] = [];
-    const references: EssayReference[] = [];
-    let inReferences = false;
-    for (const runs of rest) {
-      const line = runs.join(" ").replace(/\s+/g, " ").trim();
-      if (!line) continue;
-      if (line === "References") {
-        inReferences = true;
-        continue;
-      }
-      if (inReferences) references.push(referenceOf(line));
-      else body.push(line);
+    if (existsSync(essayPath)) {
+      const essay = essayFromBuffer(readFileSync(essayPath));
+      if (essay) return essay;
     }
-    return { title, subtitle, author: author ?? "", paragraphs: body, references };
   } catch {
-    return null;
+    // The published copy is used when the local document is absent.
   }
+  return publishedEssay;
 }
