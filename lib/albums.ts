@@ -4,9 +4,9 @@ import path from "path";
 const imageFile = /\.(jpe?g|png|webp|heic|heif)$/i;
 
 const coverFile: Record<string, string> = {
-  "affluent suburb": "IMG_8449.HEIC",
+  "affluent suburb": "IMG_8449.jpg",
   "mid-range community": "Weixin Image_20260707152815_13_333.jpg",
-  "upscale urban": "IMG_8401.HEIC",
+  "upscale urban": "IMG_8401.jpg",
 };
 
 const hiddenFile = new Set(["upscale urban/IMG_8395.jpg"]);
@@ -23,11 +23,11 @@ export type Album = {
 };
 
 function mediaUrl(album: string, file: string) {
-  return `/media/albums/${encodeURIComponent(album)}/${encodeURIComponent(file)}`;
+  return `/albums/${encodeURIComponent(album)}/${encodeURIComponent(file)}`;
 }
 
 export function listAlbums(): Album[] {
-  const docs = path.join(process.cwd(), "docs");
+  const docs = path.join(process.cwd(), "public", "albums");
   let folders: string[] = [];
   try {
     folders = readdirSync(docs, { withFileTypes: true })
