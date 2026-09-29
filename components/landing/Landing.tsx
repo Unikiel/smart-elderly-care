@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Album } from "@/lib/albums";
+import type { Cert } from "@/lib/certs";
 import type { FrontSurvey } from "@/lib/store";
 import { coverForSurvey, photos } from "@/lib/photos";
 import { surveyHeading, surveyInvite, surveyTag } from "@/lib/i18n";
@@ -17,10 +18,12 @@ export function Landing({
   surveys,
   essay,
   albums,
+  certs,
 }: {
   surveys: FrontSurvey[];
   essay: Essay | null;
   albums: Album[];
+  certs: Cert[];
 }) {
   const { locale, t } = useLocale();
   const [scrolled, setScrolled] = useState(false);
@@ -67,6 +70,13 @@ export function Landing({
                 <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f0b429] text-[#3a2718]">↓</span>
               </a>
               <a
+                href="#certs"
+                className="inline-flex h-14 w-fit items-center gap-3 rounded-full border border-[#3a2718]/30 bg-[#fff7e4] px-6 text-[17px] text-[#3a2718] transition-transform duration-500 hover:-translate-y-0.5"
+              >
+                {t.heroCert}
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f0b429] text-[#3a2718]">↓</span>
+              </a>
+              <a
                 href="#albums"
                 className="inline-flex h-14 w-fit items-center gap-3 rounded-full border border-[#3a2718]/30 bg-[#fff7e4] px-6 text-[17px] text-[#3a2718] transition-transform duration-500 hover:-translate-y-0.5"
               >
@@ -90,7 +100,7 @@ export function Landing({
         </div>
       </header>
 
-      <Stories essay={essay} albums={albums} />
+      <Stories essay={essay} albums={albums} certs={certs} />
 
       <section id="surveys" className="scroll-mt-16 border-t border-[#e0a35a]/35">
         <div className="mx-auto max-w-[1280px] px-5 pb-6 pt-16 md:px-12">
